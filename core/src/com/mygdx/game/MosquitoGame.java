@@ -10,39 +10,39 @@ public class MosquitoGame extends ApplicationAdapter {
     SpriteBatch batch;
     Texture img;
     Texture imgBG;
-    int[] x = new int[3];
-    int[] y = new int[3];
-    int[] vx = new int[3];
-    int[] vy = new int[3];
-    int[] mosquitWH = new int[3];
-    int width = 1280, height = 720;
+    Mosquito[] mosquito = new Mosquito[33];
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         img = new Texture("mosquito.png");
         imgBG = new Texture("bg.jpg");
-        for (int i = 0; i < x.length; i++) {
-            x[i] = MathUtils.random(0, 500);
-            y[i] = MathUtils.random(0, 500);
-            vx[i] = MathUtils.random(2, 10);
-            vy[i] = MathUtils.random(2, 10);
-            mosquitWH[i] = MathUtils.random(100, 200);
+        for (int i = 0; i < mosquito.length; i++) {
+            mosquito[i] = new Mosquito();
+            mosquito[i].x = MathUtils.random(0, 500);
+            mosquito[i].y = MathUtils.random(0, 500);
+            mosquito[i].vx = MathUtils.random(2, 10);
+            mosquito[i].vy = MathUtils.random(2, 10);
+            mosquito[i].mosquitWH = MathUtils.random(25, 200);
         }
     }
 
     @Override
     public void render() {
-        for (int i = 0; i < x.length; i++) {
-            x[i] += vx[i];
-            y[i] += vy[i];
-            if (x[i] > width - mosquitWH[i] || x[i] < 0) vx[i] = -vx[i];
-            if (y[i] > height - mosquitWH[i] || y[i] < 0) vy[i] = -vy[i];
+        for (Mosquito value : mosquito) {
+            value.x += value.vx;
+            value.y += value.vy;
+            if (value.x > 1280 - value.mosquitWH || value.x < 0)
+                value.vx = -value.vx;
+            if (value.y > 720 - value.mosquitWH || value.y < 0)
+                value.vy = -value.vy;
         }
         ScreenUtils.clear(0, 1, 0, 1);
         batch.begin();
-        batch.draw(imgBG, 0, 0, width, height);
-        for (int j = 0; j < x.length; j++) batch.draw(img, x[j], y[j], mosquitWH[j], mosquitWH[j]);
+        batch.draw(imgBG, 0, 0, 1280, 720);
+        for (Mosquito value : mosquito) {
+            batch.draw(img, value.x, value.y, value.mosquitWH, value.mosquitWH);
+        }
         batch.end();
     }
 
