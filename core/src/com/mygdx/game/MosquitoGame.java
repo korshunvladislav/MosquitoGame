@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,7 +11,7 @@ public class MosquitoGame extends ApplicationAdapter {
     SpriteBatch batch;
     Texture img;
     Texture imgBG;
-    Mosquito[] mosquito = new Mosquito[33];
+    Mosquito[] mosquito = new Mosquito[100000];
 
     @Override
     public void create() {
@@ -19,11 +20,11 @@ public class MosquitoGame extends ApplicationAdapter {
         imgBG = new Texture("bg.jpg");
         for (int i = 0; i < mosquito.length; i++) {
             mosquito[i] = new Mosquito();
-            mosquito[i].x = MathUtils.random(0, 500);
-            mosquito[i].y = MathUtils.random(0, 500);
-            mosquito[i].vx = MathUtils.random(2, 10);
-            mosquito[i].vy = MathUtils.random(2, 10);
-            mosquito[i].mosquitWH = MathUtils.random(25, 200);
+            mosquito[i].x = MathUtils.random(0f, 500);
+            mosquito[i].y = MathUtils.random(0f, 500);
+            mosquito[i].vx = MathUtils.random(2f, 10);
+            mosquito[i].vy = MathUtils.random(2f, 10);
+            mosquito[i].mosquitWH = MathUtils.random(25f , 200);
         }
     }
 
@@ -44,6 +45,7 @@ public class MosquitoGame extends ApplicationAdapter {
             batch.draw(img, value.x, value.y, value.mosquitWH, value.mosquitWH);
         }
         batch.end();
+        System.out.println(Gdx.graphics.getFramesPerSecond());
     }
 
     @Override
@@ -54,7 +56,7 @@ public class MosquitoGame extends ApplicationAdapter {
 }
 
 class Mosquito {
-    int x, y;
-    int vx, vy;
-    int mosquitWH;
+    float x, y;
+    float vx, vy;
+    float mosquitWH;
 }
