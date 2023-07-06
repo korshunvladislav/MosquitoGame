@@ -1,63 +1,93 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.TimeUtils;
 
-public class MosquitoGame extends ApplicationAdapter {
-    public static final int SCR_WIDTH = 1280, SCR_HEIGHT = 720;
-    SpriteBatch batch;
-    Texture img;
-    Texture imgBG;
-    Mosquito[] mosquito = new Mosquito[100];
+public class MosquitoGame extends Game {
+    // ширина и высота экрана
+    public static float SCR_WIDTH;
+    public static float SCR_HEIGHT;
+
+    Mosquito[] mosquito;
+    Texture[] imges;
+
+    Texture imgBackGround; // фоновое изображение
+
+    // системные объекты
+    SpriteBatch batch; // Объект, отвечающий за вывод изображений
+    OrthographicCamera camera; // пересчитывает размеры для различных экранов
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        img = new Texture("mosquito.png");
-        imgBG = new Texture("bg.jpg");
+        batch = new SpriteBatch(); // создать объект, отвечающий за вывод изображений
+        camera = new OrthographicCamera();
+
+        SCR_WIDTH = Gdx.graphics.getWidth();
+        SCR_HEIGHT = Gdx.graphics.getHeight();
+
+        camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
+
+        imgBackGround = new Texture("bg.jpg");
+
+        float width = SCR_WIDTH / 5;
+        float height = SCR_HEIGHT / 5 + 100;
+
+        imges = new Texture[]{
+                new Texture("mosq0.png"),
+                new Texture("mosq1.png"),
+                new Texture("mosq2.png"),
+                new Texture("mosq3.png"),
+                new Texture("mosq4.png"),
+                new Texture("mosq5.png"),
+                new Texture("mosq6.png"),
+                new Texture("mosq7.png"),
+                new Texture("mosq8.png"),
+                new Texture("mosq9.png"),
+                new Texture("mosq10.png"),
+        };
+
+        mosquito = new Mosquito[25];
         for (int i = 0; i < mosquito.length; i++) {
-            mosquito[i] = new Mosquito();
-            mosquito[i].mosquitWH = MathUtils.random(25f, 200);
-            mosquito[i].x = MathUtils.random(0f, SCR_WIDTH - mosquito[i].mosquitWH);
-            mosquito[i].y = MathUtils.random(0f, SCR_HEIGHT - mosquito[i].mosquitWH);
-            mosquito[i].vx = MathUtils.random(-10f, 10);
-            mosquito[i].vy = MathUtils.random(-10f, 10);
+            mosquito[i] = new Mosquito(0, 0, width, height);
         }
     }
 
     @Override
     public void render() {
-        for (Mosquito value : mosquito) {
-            value.x += value.vx;
-            value.y += value.vy;
-            if (value.x >= SCR_WIDTH - value.mosquitWH || value.x <= 0)
-                value.vx = -value.vx;
-            if (value.y >= SCR_HEIGHT - value.mosquitWH || value.y <= 0)
-                value.vy = -value.vy;
-        }
-        ScreenUtils.clear(0, 1, 0, 1);
         batch.begin();
-        batch.draw(imgBG, 0, 0, SCR_WIDTH, SCR_HEIGHT);
-        for (Mosquito value : mosquito) {
-            batch.draw(img, value.x, value.y, value.mosquitWH, value.mosquitWH);
+
+        batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+        for (int i = 0; i < mosquito.length; i++) {
+            mosquito[i].checkDirections();
+            mosquito[i].move();
         }
+
+        for (int i = 0; i < mosquito.length; i++) {
+            batch.draw(imges[mosquito[i].faza], mosquito[i].x, mosquito[i].y, mosquito[i].width, mosquito[i].height, 0, 0, 500, 500, mosquito[i].isFlip(), false);
+        }
+
         batch.end();
-        System.out.println(Gdx.graphics.getFramesPerSecond());
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        img.dispose();
+        for (int i = 0; i < mosquito.length; i++) {
+            imges[i].dispose();
+        }
+        imgBackGround.dispose();
     }
-}
-
-class Mosquito {
-    float x, y;
-    float vx, vy;
-    float mosquitWH;
 }
